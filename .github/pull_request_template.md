@@ -25,4 +25,4 @@ Documentation :books:
 - Added comments where the code itself can't easily express intent.
 - Merged the latest from `master` onto your branch (or from `release` if this is a hotfix).
 - Updated documentation if required (Confluence, readme etc).
-- Added / modified tests related to your changes.
+- Added or modified tests related to your changes.
