@@ -1,7 +1,6 @@
 const core = require('@actions/core');
 const github = require('@actions/github');
 const { subtractDaysToDate } = require('./utils');
-const { Telemetry } = require('./services');
 const { fetchPullRequestById } = require('./fetchers');
 const {
   getPulls,
@@ -90,14 +89,5 @@ module.exports = async (params) => {
 
   const { githubToken } = params;
   const octokit = github.getOctokit(githubToken);
-  const telemetry = new Telemetry({ core, telemetry: params.telemetry });
-
-  try {
-    telemetry.start(params);
-    await run({ ...params, octokit });
-    telemetry.success();
-  } catch (error) {
-    telemetry.error(error);
-    throw error;
-  }
+  await run({ ...params, octokit });
 };

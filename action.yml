@@ -39,10 +39,6 @@ inputs:
     description: 'Where to publish the results. Possible values: "COMMENT" or "DESCRIPTION"'
     required: false
     default: 'COMMENT'
-  telemetry:
-    description: 'Indicates if the action is allowed to send monitoring data to the developer.'
-    required: false
-    default: true
   slack-webhook:
     description: 'A Slack webhook URL to post resulting stats.'
     required: false
