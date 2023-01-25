@@ -5,7 +5,6 @@ const [reviewer] = reviewers;
 const defaultParams = {
   reviewer,
   index: 0,
-  disableLinks: true,
   displayCharts: false,
 };
 
@@ -55,12 +54,12 @@ describe('Interactors | postTeamsMessage | .buildReviewer', () => {
 
   describe('requiring links', () => {
     it('adds a medal to username section', () => {
-      const response = buildReviewer({ ...defaultParams, disableLinks: false });
+      const response = buildReviewer({ ...defaultParams });
       expect(extractData(response)).toEqual({
         ...expectedContent,
         stats: {
           ...expectedContent.stats,
-          timeToReview: '[34m](https://app.flowwer.dev/charts/review-time/1)',
+          timeToReview: '34m',
         },
       });
     });

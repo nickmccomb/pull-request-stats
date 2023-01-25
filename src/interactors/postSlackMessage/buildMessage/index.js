@@ -8,7 +8,6 @@ module.exports = ({
   reviewers,
   pullRequest,
   periodLength,
-  disableLinks,
   displayCharts,
 }) => ({
   blocks: [
@@ -26,7 +25,6 @@ module.exports = ({
         t,
         index,
         reviewer,
-        disableLinks,
         displayCharts,
       })],
     []),

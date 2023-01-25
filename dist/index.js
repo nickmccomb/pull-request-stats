@@ -2387,7 +2387,6 @@ const toTableArray = __webpack_require__(65);
 
 module.exports = ({
   reviewers,
-  disableLinks,
   displayCharts,
 }) => {
   const execute = () => {
@@ -2397,7 +2396,6 @@ module.exports = ({
     const tableData = getTableData({
       bests,
       reviewers,
-      disableLinks,
       displayCharts,
     });
 
@@ -2711,182 +2709,6 @@ const calculateBests = (allStats) => STATS.reduce((prev, statName) => {
 }, {});
 
 module.exports = calculateBests;
-
-
-/***/ }),
-
-/***/ 241:
-/***/ (function(__unusedmodule, exports) {
-
-/**
- * Copyright (c) 2011 Bruno Jouhier <bruno.jouhier@sage.com>
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
- *
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
- */
-//
-(function(exports) {
-	"use strict";
-	exports.stringify = function stringify(v) {
-		function encode(s) {
-			return !/[^\w-.]/.test(s) ? s : s.replace(/[^\w-.]/g, function(ch) {
-				if (ch === '$') return '!';
-				ch = ch.charCodeAt(0);
-				// thanks to Douglas Crockford for the negative slice trick
-				return ch < 0x100 ? '*' + ('00' + ch.toString(16)).slice(-2) : '**' + ('0000' + ch.toString(16)).slice(-4);
-			});
-		}
-
-		var tmpAry;
-
-		switch (typeof v) {
-			case 'number':
-				return isFinite(v) ? '~' + v : '~null';
-			case 'boolean':
-				return '~' + v;
-			case 'string':
-				return "~'" + encode(v);
-			case 'object':
-				if (!v) return '~null';
-
-				tmpAry = [];
-
-				if (Array.isArray(v)) {
-					for (var i = 0; i < v.length; i++) {
-						tmpAry[i] = stringify(v[i]) || '~null';
-					}
-
-					return '~(' + (tmpAry.join('') || '~') + ')';
-				} else {
-					for (var key in v) {
-						if (v.hasOwnProperty(key)) {
-							var val = stringify(v[key]);
-
-							// skip undefined and functions
-							if (val) {
-								tmpAry.push(encode(key) + val);
-							}
-						}
-					}
-
-					return '~(' + tmpAry.join('~') + ')';
-				}
-			default:
-				// function, undefined
-				return;
-		}
-	};
-
-	var reserved = {
-		"true": true,
-		"false": false,
-		"null": null
-	};
-
-	exports.parse = function(s) {
-		if (!s) return s;
-		s = s.replace(/%(25)*27/g, "'");
-		var i = 0,
-			len = s.length;
-
-		function eat(expected) {
-			if (s.charAt(i) !== expected) throw new Error("bad JSURL syntax: expected " + expected + ", got " + (s && s.charAt(i)));
-			i++;
-		}
-
-		function decode() {
-			var beg = i,
-				ch, r = "";
-			while (i < len && (ch = s.charAt(i)) !== '~' && ch !== ')') {
-				switch (ch) {
-					case '*':
-						if (beg < i) r += s.substring(beg, i);
-						if (s.charAt(i + 1) === '*') r += String.fromCharCode(parseInt(s.substring(i + 2, i + 6), 16)), beg = (i += 6);
-						else r += String.fromCharCode(parseInt(s.substring(i + 1, i + 3), 16)), beg = (i += 3);
-						break;
-					case '!':
-						if (beg < i) r += s.substring(beg, i);
-						r += '$', beg = ++i;
-						break;
-					default:
-						i++;
-				}
-			}
-			return r + s.substring(beg, i);
-		}
-
-		return (function parseOne() {
-			var result, ch, beg;
-			eat('~');
-			switch (ch = s.charAt(i)) {
-				case '(':
-					i++;
-					if (s.charAt(i) === '~') {
-						result = [];
-						if (s.charAt(i + 1) === ')') i++;
-						else {
-							do {
-								result.push(parseOne());
-							} while (s.charAt(i) === '~');
-						}
-					} else {
-						result = {};
-						if (s.charAt(i) !== ')') {
-							do {
-								var key = decode();
-								result[key] = parseOne();
-							} while (s.charAt(i) === '~' && ++i);
-						}
-					}
-					eat(')');
-					break;
-				case "'":
-					i++;
-					result = decode();
-					break;
-				default:
-					beg = i++;
-					while (i < len && /[^)~]/.test(s.charAt(i)))
-					i++;
-					var sub = s.substring(beg, i);
-					if (/[\d\-]/.test(ch)) {
-						result = parseFloat(sub);
-					} else {
-						result = reserved[sub];
-						if (typeof result === "undefined") throw new Error("bad value keyword: " + sub);
-					}
-			}
-			return result;
-		})();
-	}
-
-	exports.tryParse = function(s, def) {
-		try {
-			return exports.parse(s);
-		} catch (ex) {
-			return def;
-		}
-	}
-
-})( true ? exports : (undefined));
 
 
 /***/ }),
@@ -5936,15 +5758,12 @@ const getUsername = ({ index, reviewer, displayCharts }) => {
   });
 };
 
-const getStats = ({ reviewer, disableLinks }) => {
-  const { stats, urls } = reviewer;
+const getStats = ({ reviewer }) => {
+  const { stats } = reviewer;
   const timeToReviewStr = durationToString(stats.timeToReview);
-  const timeToReview = disableLinks
-    ? timeToReviewStr
-    : `[${timeToReviewStr}](${urls.timeToReview})`;
 
   return [
-    wrapStat(timeToReview),
+    wrapStat(timeToReviewStr),
     wrapStat(stats.totalReviews),
     wrapStat(stats.totalComments),
   ];
@@ -5953,7 +5772,6 @@ const getStats = ({ reviewer, disableLinks }) => {
 module.exports = ({
   index,
   reviewer,
-  disableLinks,
   displayCharts,
 }) => ({
   type: 'ColumnSet',
@@ -5962,7 +5780,7 @@ module.exports = ({
   separator: true,
   columns: [
     getUsername({ index, reviewer, displayCharts }),
-    ...getStats({ reviewer, disableLinks }),
+    ...getStats({ reviewer }),
   ],
 });
 
@@ -7156,13 +6974,6 @@ module.exports = ({ tracker, timeMs }) => {
   });
 };
 
-
-/***/ }),
-
-/***/ 402:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-module.exports = __webpack_require__(241);
 
 /***/ }),
 
@@ -13579,15 +13390,9 @@ const getImage = ({ author, displayCharts }) => {
   return buildLink(url, buildImage(avatarUrl, avatarSize));
 };
 
-const addReviewsTimeLink = (text, disable, link) => {
-  const addLink = link && !disable;
-  return addLink ? `[${text}](${link})` : text;
-};
-
 module.exports = ({
   reviewers,
   bests = {},
-  disableLinks = false,
   displayCharts = false,
 }) => {
   const printStat = (stats, statName, parser) => {
@@ -13601,21 +13406,20 @@ module.exports = ({
 
   const buildRow = ({ reviewer, index }) => {
     const {
-      author, stats, contributions, urls,
+      author, stats, contributions,
     } = reviewer;
     const { login } = author || {};
     const chartsData = getChartsData({ index, contributions, displayCharts });
 
     const avatar = getImage({ author, displayCharts });
     const timeVal = printStat(stats, 'timeToReview', durationToString);
-    const timeStr = addReviewsTimeLink(timeVal, disableLinks, urls.timeToReview);
     const reviewsStr = printStat(stats, 'totalReviews', noParse);
     const commentsStr = printStat(stats, 'totalComments', noParse);
 
     return {
       avatar,
       username: `${login}${chartsData.username}`,
-      timeToReview: `${timeStr}${chartsData.timeStr}`,
+      timeToReview: `${timeVal}${chartsData.timeStr}`,
       totalReviews: `${reviewsStr}${chartsData.reviewsStr}`,
       totalComments: `${commentsStr}${chartsData.commentsStr}`,
     };
@@ -13875,7 +13679,6 @@ module.exports = async ({
   teams,
   reviewers,
   periodLength,
-  disableLinks,
   displayCharts,
   pullRequest = null,
 }) => {
@@ -13903,7 +13706,6 @@ module.exports = async ({
     reviewers,
     pullRequest,
     periodLength,
-    disableLinks,
     displayCharts,
   });
 
@@ -14145,12 +13947,12 @@ const run = async (params) => {
   const {
     org,
     repos,
-    limit,
+    limitTop,
+    limitBottom,
     sortBy,
     octokit,
     publishAs,
     periodLength,
-    disableLinks,
     personalToken,
     displayCharts,
     pullRequestId,
@@ -14177,13 +13979,14 @@ const run = async (params) => {
   core.info(`Analyzed stats for ${reviewersRaw.length} pull request reviewers`);
 
   const reviewers = setUpReviewers({
-    limit,
     sortBy,
     periodLength,
     reviewers: reviewersRaw,
+    limitTop,
+    limitBottom,
   });
 
-  const table = buildTable({ reviewers, disableLinks, displayCharts });
+  const table = buildTable({ reviewers, displayCharts });
   core.debug('Stats table built successfully');
 
   const content = buildComment({
@@ -15010,9 +14813,9 @@ const getParams = () => {
     publishAs: core.getInput('publish-as'),
     periodLength: getPeriod(),
     displayCharts: core.getBooleanInput('charts'),
-    disableLinks: core.getBooleanInput('disable-links'),
     pullRequestId: getPrId(),
-    limit: parseInt(core.getInput('limit'), 10),
+    limitTop: parseInt(core.getInput('limit'), 10),
+    limitBottom: parseInt(core.getInput('limit'), 10),
     telemetry: core.getBooleanInput('telemetry'),
     webhook: core.getInput('webhook'),
     slack: {
@@ -15270,12 +15073,9 @@ const getUsername = ({ index, reviewer, displayCharts }) => {
   };
 };
 
-const getStats = ({ t, reviewer, disableLinks }) => {
-  const { stats, urls } = reviewer;
+const getStats = ({ t, reviewer }) => {
+  const { stats } = reviewer;
   const timeToReviewStr = durationToString(stats.timeToReview);
-  const timeToReview = disableLinks
-    ? timeToReviewStr
-    : `<${urls.timeToReview}|${timeToReviewStr}>`;
 
   return {
     type: 'section',
@@ -15290,7 +15090,7 @@ const getStats = ({ t, reviewer, disableLinks }) => {
       },
       {
         type: 'mrkdwn',
-        text: `*${t('table.columns.timeToReview')}:* ${timeToReview}`,
+        text: `*${t('table.columns.timeToReview')}:* ${timeToReviewStr}`,
       },
     ],
   };
@@ -15304,11 +15104,10 @@ module.exports = ({
   t,
   index,
   reviewer,
-  disableLinks,
   displayCharts,
 }) => [
   getUsername({ index, reviewer, displayCharts }),
-  getStats({ t, reviewer, disableLinks }),
+  getStats({ t, reviewer }),
   getDivider(),
 ];
 
@@ -15367,7 +15166,6 @@ module.exports = ({
   reviewers,
   pullRequest,
   periodLength,
-  disableLinks,
   displayCharts,
 }) => ({
   blocks: [
@@ -15385,7 +15183,6 @@ module.exports = ({
         t,
         index,
         reviewer,
-        disableLinks,
         displayCharts,
       })],
     []),
@@ -15500,7 +15297,6 @@ module.exports = ({
   reviewers,
   pullRequest,
   periodLength,
-  disableLinks,
   displayCharts,
 }) => ([
   buildSubtitle({
@@ -15516,7 +15312,6 @@ module.exports = ({
   ...reviewers.map((reviewer, index) => buildReviewer({
     index,
     reviewer,
-    disableLinks,
     displayCharts,
   })),
 ]);
@@ -18781,7 +18576,6 @@ module.exports = async ({
   slack,
   reviewers,
   periodLength,
-  disableLinks,
   displayCharts,
   pullRequest = null,
 }) => {
@@ -18812,7 +18606,6 @@ module.exports = async ({
     reviewers,
     pullRequest,
     periodLength,
-    disableLinks,
     displayCharts,
   });
 
@@ -19042,32 +18835,43 @@ module.exports = function () {
 /***/ 901:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
-const buildReviewTimeLink = __webpack_require__(922);
 const getContributions = __webpack_require__(660);
 const calculateTotals = __webpack_require__(202);
 const sortByStats = __webpack_require__(914);
 
-const applyLimit = (data, limit) => (limit > 0 ? data.slice(0, limit) : data);
-
-const getUrls = ({ reviewer, periodLength }) => ({
-  timeToReview: buildReviewTimeLink(reviewer, periodLength),
-});
-
 module.exports = ({
   sortBy,
   reviewers,
-  periodLength,
-  limit = null,
+  limitTop,
+  limitBottom,
 }) => {
   const allStats = reviewers.map((r) => r.stats);
   const totals = calculateTotals(allStats);
+  const sorted = sortByStats(reviewers, sortBy).map((reviewer) => ({
+    ...reviewer,
+    contributions: getContributions(reviewer, totals),
+  }));
 
-  return applyLimit(sortByStats(reviewers, sortBy), limit)
-    .map((reviewer) => ({
-      ...reviewer,
-      contributions: getContributions(reviewer, totals),
-      urls: getUrls({ reviewer, periodLength }),
-    }));
+  // // get top and bottom limits (if user set this as a param)
+  const top = sorted.slice(0, limitTop);
+  const bottom = sorted.slice(-limitBottom);
+
+  // only show top X and bottom X reviewers
+  if (limitTop && limitBottom) {
+    return [...top, ...bottom];
+  }
+
+  // only show top X reviewers
+  if (limitTop) {
+    return top;
+  }
+
+  // only show bottom X reviwers
+  if (limitBottom) {
+    return bottom;
+  }
+
+  return sorted;
 };
 
 
@@ -19084,7 +18888,6 @@ module.exports = ({
   sortBy,
   periodLength,
   displayCharts,
-  disableLinks,
   currentRepo,
   limit,
   tracker,
@@ -19110,7 +18913,6 @@ module.exports = ({
     sortBy,
     periodLength,
     displayCharts,
-    disableLinks,
     limit,
     usingSlack,
     usingTeams,
@@ -19141,62 +18943,6 @@ const sortByStats = (reviewers, sortBy) => {
 };
 
 module.exports = sortByStats;
-
-
-/***/ }),
-
-/***/ 922:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-const JSURL = __webpack_require__(402);
-
-const URL = 'https://app.flowwer.dev/charts/review-time/';
-const MAX_URI_LENGTH = 1024;
-const CHARS_PER_REVIEW = 16;
-
-const toSeconds = (ms) => Math.round(ms / 1000);
-
-const compressInt = (int) => int.toString(36);
-
-const compressDate = (date) => compressInt(Math.round(date.getTime() / 1000));
-
-const parseReview = ({ submittedAt, timeToReview }) => ({
-  d: compressDate(submittedAt),
-  t: compressInt(toSeconds(timeToReview)),
-});
-
-const buildUri = ({ author, period, reviews }) => {
-  const data = JSURL.stringify({
-    u: {
-      i: `${author.id}`,
-      n: author.login,
-    },
-    p: period,
-    r: reviews,
-  });
-
-  const uri = `${URL}${data}`;
-  const exceededLength = uri.length - MAX_URI_LENGTH;
-  if (exceededLength <= 0) return uri;
-
-  // Remove at least one, but trying to guess exactly how many to remove.
-  const reviewsToRemove = Math.max(1, Math.ceil(exceededLength / CHARS_PER_REVIEW));
-  return buildUri({ author, period, reviews: reviews.slice(reviewsToRemove) });
-};
-
-module.exports = (reviewer, period) => {
-  const { author, reviews } = reviewer || {};
-  const parsedReviews = (reviews || [])
-    .map((r) => ({ ...r, submittedAt: new Date(r.submittedAt) }))
-    .sort((a, b) => a.submittedAt - b.submittedAt)
-    .map(parseReview);
-
-  return buildUri({
-    author,
-    period,
-    reviews: parsedReviews,
-  });
-};
 
 
 /***/ }),

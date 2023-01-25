@@ -27,7 +27,6 @@ describe('Interactors | .postTeamsMessage', () => {
     reviewers: 'REVIEWERS',
     pullRequest: 'PULl REQUEST',
     periodLength: 'PERIOD LENGTH',
-    disableLinks: 'DISPLAY LINKS',
     displayCharts: 'DISPLAY CHARTS',
     teams: {
       webhook: 'https://microsoft.com/teams/webhook',
@@ -70,7 +69,6 @@ describe('Interactors | .postTeamsMessage', () => {
         reviewers: defaultOptions.reviewers,
         pullRequest: defaultOptions.pullRequest,
         periodLength: defaultOptions.periodLength,
-        disableLinks: defaultOptions.disableLinks,
         displayCharts: defaultOptions.displayCharts,
       });
       expect(buildPayload).toBeCalledWith(MESSAGE);

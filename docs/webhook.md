@@ -89,9 +89,6 @@ The webhook payload will include:
         "commentsPerReview": 0,
         "timeToReview": 553500
       },
-      "urls": {
-        "timeToReview": "https://app.flowwer.dev/charts/review-time/..."
-      }
     },
   ],
   "options": {

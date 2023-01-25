@@ -27,14 +27,14 @@ const SIMPLE_RESPONSE = [
   {
     avatar: AVATAR1,
     username: 'user1',
-    timeToReview: '[34m](https://app.flowwer.dev/charts/review-time/1)',
+    timeToReview: '34m',
     totalReviews: '4',
     totalComments: '1',
   },
   {
     avatar: AVATAR2,
     username: 'user2',
-    timeToReview: '[2h 21m](https://app.flowwer.dev/charts/review-time/2)',
+    timeToReview: '2h 21m',
     totalReviews: '1',
     totalComments: '5',
   },
@@ -45,14 +45,14 @@ const CHARTS_RESPONSE = [
   {
     avatar: AVATAR1_BIG,
     username: 'user1<br/>🥇',
-    timeToReview: '[**34m**](https://app.flowwer.dev/charts/review-time/1)<br/>▀▀',
+    timeToReview: '**34m**<br/>▀▀',
     totalReviews: '**4**<br/>▀▀▀▀▀▀▀▀',
     totalComments: '1<br/>▀▀',
   },
   {
     avatar: AVATAR2_BIG,
     username: 'user2<br/>🥈',
-    timeToReview: '[2h 21m](https://app.flowwer.dev/charts/review-time/2)<br/>▀▀▀▀▀▀▀▀',
+    timeToReview: '2h 21m<br/>▀▀▀▀▀▀▀▀',
     totalReviews: '1<br/>▀▀',
     totalComments: '**5**<br/>▀▀▀▀▀▀▀▀',
   },
@@ -111,16 +111,14 @@ describe('Interactors | .buildTable | .getTableData', () => {
 
   describe('when disabling links', () => {
     it('returns the data without external links', () => {
-      const response = getTableData({ reviewers, disableLinks: true });
+      const response = getTableData({ reviewers });
       expect(response).toEqual(NO_LINKS_RESPONSE);
     });
   });
 
   describe('when disabling links but adding charts', () => {
     it('returns the data without external links', () => {
-      const response = getTableData({
-        bests, reviewers, displayCharts: true, disableLinks: true,
-      });
+      const response = getTableData({ bests, reviewers, displayCharts: true });
       expect(response).toEqual(CHARTS_NO_LINKS_RESPONSE);
     });
   });

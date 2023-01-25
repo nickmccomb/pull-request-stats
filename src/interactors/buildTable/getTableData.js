@@ -46,15 +46,9 @@ const getImage = ({ author, displayCharts }) => {
   return buildLink(url, buildImage(avatarUrl, avatarSize));
 };
 
-const addReviewsTimeLink = (text, disable, link) => {
-  const addLink = link && !disable;
-  return addLink ? `[${text}](${link})` : text;
-};
-
 module.exports = ({
   reviewers,
   bests = {},
-  disableLinks = false,
   displayCharts = false,
 }) => {
   const printStat = (stats, statName, parser) => {
@@ -68,21 +62,20 @@ module.exports = ({
 
   const buildRow = ({ reviewer, index }) => {
     const {
-      author, stats, contributions, urls,
+      author, stats, contributions,
     } = reviewer;
     const { login } = author || {};
     const chartsData = getChartsData({ index, contributions, displayCharts });
 
     const avatar = getImage({ author, displayCharts });
     const timeVal = printStat(stats, 'timeToReview', durationToString);
-    const timeStr = addReviewsTimeLink(timeVal, disableLinks, urls.timeToReview);
     const reviewsStr = printStat(stats, 'totalReviews', noParse);
     const commentsStr = printStat(stats, 'totalComments', noParse);
 
     return {
       avatar,
       username: `${login}${chartsData.username}`,
-      timeToReview: `${timeStr}${chartsData.timeStr}`,
+      timeToReview: `${timeVal}${chartsData.timeStr}`,
       totalReviews: `${reviewsStr}${chartsData.reviewsStr}`,
       totalComments: `${commentsStr}${chartsData.commentsStr}`,
     };

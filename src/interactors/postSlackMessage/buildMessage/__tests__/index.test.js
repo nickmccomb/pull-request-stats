@@ -12,7 +12,6 @@ const defaultOptions = {
   reviewers: ['REVIEWER 1'],
   pullRequest: 'PULL REQUEST',
   periodLength: 'PERIOD LENGTH',
-  disableLinks: 'DISABLE LINKS',
   displayCharts: 'DISPLAY CHARTS',
 };
 
@@ -43,7 +42,6 @@ describe('Interactors | postSlackMessage | .buildMessage', () => {
       t: expect.anything(),
       index: 0,
       reviewer: defaultOptions.reviewers[0],
-      disableLinks: defaultOptions.disableLinks,
       displayCharts: defaultOptions.displayCharts,
     });
   });

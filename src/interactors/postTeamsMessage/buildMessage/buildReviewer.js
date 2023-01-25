@@ -85,15 +85,12 @@ const getUsername = ({ index, reviewer, displayCharts }) => {
   });
 };
 
-const getStats = ({ reviewer, disableLinks }) => {
-  const { stats, urls } = reviewer;
+const getStats = ({ reviewer }) => {
+  const { stats } = reviewer;
   const timeToReviewStr = durationToString(stats.timeToReview);
-  const timeToReview = disableLinks
-    ? timeToReviewStr
-    : `[${timeToReviewStr}](${urls.timeToReview})`;
 
   return [
-    wrapStat(timeToReview),
+    wrapStat(timeToReviewStr),
     wrapStat(stats.totalReviews),
     wrapStat(stats.totalComments),
   ];
@@ -102,7 +99,6 @@ const getStats = ({ reviewer, disableLinks }) => {
 module.exports = ({
   index,
   reviewer,
-  disableLinks,
   displayCharts,
 }) => ({
   type: 'ColumnSet',
@@ -111,6 +107,6 @@ module.exports = ({
   separator: true,
   columns: [
     getUsername({ index, reviewer, displayCharts }),
-    ...getStats({ reviewer, disableLinks }),
+    ...getStats({ reviewer }),
   ],
 });

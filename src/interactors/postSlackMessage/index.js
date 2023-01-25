@@ -10,7 +10,6 @@ module.exports = async ({
   slack,
   reviewers,
   periodLength,
-  disableLinks,
   displayCharts,
   pullRequest = null,
 }) => {
@@ -41,7 +40,6 @@ module.exports = async ({
     reviewers,
     pullRequest,
     periodLength,
-    disableLinks,
     displayCharts,
   });
 

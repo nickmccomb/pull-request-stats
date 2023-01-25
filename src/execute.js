@@ -21,12 +21,12 @@ const run = async (params) => {
   const {
     org,
     repos,
-    limit,
+    limitTop,
+    limitBottom,
     sortBy,
     octokit,
     publishAs,
     periodLength,
-    disableLinks,
     personalToken,
     displayCharts,
     pullRequestId,
@@ -53,13 +53,14 @@ const run = async (params) => {
   core.info(`Analyzed stats for ${reviewersRaw.length} pull request reviewers`);
 
   const reviewers = setUpReviewers({
-    limit,
     sortBy,
     periodLength,
     reviewers: reviewersRaw,
+    limitTop,
+    limitBottom,
   });
 
-  const table = buildTable({ reviewers, disableLinks, displayCharts });
+  const table = buildTable({ reviewers, displayCharts });
   core.debug('Stats table built successfully');
 
   const content = buildComment({

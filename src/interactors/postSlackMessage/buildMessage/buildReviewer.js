@@ -29,12 +29,9 @@ const getUsername = ({ index, reviewer, displayCharts }) => {
   };
 };
 
-const getStats = ({ t, reviewer, disableLinks }) => {
-  const { stats, urls } = reviewer;
+const getStats = ({ t, reviewer }) => {
+  const { stats } = reviewer;
   const timeToReviewStr = durationToString(stats.timeToReview);
-  const timeToReview = disableLinks
-    ? timeToReviewStr
-    : `<${urls.timeToReview}|${timeToReviewStr}>`;
 
   return {
     type: 'section',
@@ -49,7 +46,7 @@ const getStats = ({ t, reviewer, disableLinks }) => {
       },
       {
         type: 'mrkdwn',
-        text: `*${t('table.columns.timeToReview')}:* ${timeToReview}`,
+        text: `*${t('table.columns.timeToReview')}:* ${timeToReviewStr}`,
       },
     ],
   };
@@ -63,10 +60,9 @@ module.exports = ({
   t,
   index,
   reviewer,
-  disableLinks,
   displayCharts,
 }) => [
   getUsername({ index, reviewer, displayCharts }),
-  getStats({ t, reviewer, disableLinks }),
+  getStats({ t, reviewer }),
   getDivider(),
 ];

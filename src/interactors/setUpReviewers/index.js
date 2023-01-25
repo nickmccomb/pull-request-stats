@@ -1,27 +1,38 @@
-const buildReviewTimeLink = require('./buildReviewTimeLink');
 const getContributions = require('./getContributions');
 const calculateTotals = require('./calculateTotals');
 const sortByStats = require('./sortByStats');
 
-const applyLimit = (data, limit) => (limit > 0 ? data.slice(0, limit) : data);
-
-const getUrls = ({ reviewer, periodLength }) => ({
-  timeToReview: buildReviewTimeLink(reviewer, periodLength),
-});
-
 module.exports = ({
   sortBy,
   reviewers,
-  periodLength,
-  limit = null,
+  limitTop,
+  limitBottom,
 }) => {
   const allStats = reviewers.map((r) => r.stats);
   const totals = calculateTotals(allStats);
+  const sorted = sortByStats(reviewers, sortBy).map((reviewer) => ({
+    ...reviewer,
+    contributions: getContributions(reviewer, totals),
+  }));
 
-  return applyLimit(sortByStats(reviewers, sortBy), limit)
-    .map((reviewer) => ({
-      ...reviewer,
-      contributions: getContributions(reviewer, totals),
-      urls: getUrls({ reviewer, periodLength }),
-    }));
+  // // get top and bottom limits (if user set this as a param)
+  const top = sorted.slice(0, limitTop);
+  const bottom = sorted.slice(-limitBottom);
+
+  // only show top X and bottom X reviewers
+  if (limitTop && limitBottom) {
+    return [...top, ...bottom];
+  }
+
+  // only show top X reviewers
+  if (limitTop) {
+    return top;
+  }
+
+  // only show bottom X reviwers
+  if (limitBottom) {
+    return bottom;
+  }
+
+  return sorted;
 };

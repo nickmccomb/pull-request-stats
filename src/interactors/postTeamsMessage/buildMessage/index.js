@@ -9,7 +9,6 @@ module.exports = ({
   reviewers,
   pullRequest,
   periodLength,
-  disableLinks,
   displayCharts,
 }) => ([
   buildSubtitle({
@@ -25,7 +24,6 @@ module.exports = ({
   ...reviewers.map((reviewer, index) => buildReviewer({
     index,
     reviewer,
-    disableLinks,
     displayCharts,
   })),
 ]);

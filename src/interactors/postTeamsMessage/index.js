@@ -13,7 +13,6 @@ module.exports = async ({
   teams,
   reviewers,
   periodLength,
-  disableLinks,
   displayCharts,
   pullRequest = null,
 }) => {
@@ -41,7 +40,6 @@ module.exports = async ({
     reviewers,
     pullRequest,
     periodLength,
-    disableLinks,
     displayCharts,
   });
 

@@ -28,9 +28,9 @@ The possible inputs for this action are:
 | `repositories` | A comma separated list of github repositories to calculate the stats, eg. `username/repo1,username/repo2`. When specifying other repo(s) **it is mandatory to pass a Personal Access Token** in the `token` parameter.| Current repository |
 | `organization` | If you prefer, you may specify the name of your organization to calculate the stats across all of its repos. When specifying an organization **it is mandatory to pass a Personal Access Token** in the `token` parameter. | `null`|
 | `period` | The length of the period used to calculate the stats, expressed in days. | `30` |
-| `limit` | The maximum number of rows to display in the table. A value of `0` means unlimited. |`0`|
+| `limitTop` | The maximum number of top rows (highest scored reviewers) to display in the table. A value of `0` means unlimited. |`0`|
+| `limit` | The maximum number of bottom rows (lowest scored reviewers) to display in the table. A value of `0` means unlimited. |`0`|
 | `charts` | Whether to add a chart to the start or not. Possible values: `true` or `false`. | `false` |
-| `disable-links` | If `true`, removes the links to the detailed charts. Possible values: `true` or `false`. | `false` |
 | `sort-by` | The column used to sort the data. Possible values: `REVIEWS`, `TIME`, `COMMENTS`. | `REVIEWS` |
 | `publish-as` | Where to publish the results. Possible values: as a `COMMENT`, on the pull request `DESCRIPTION`. | `COMMENT` |
 | `telemetry` | Indicates if the action is allowed to send monitoring data to the developer. This data is [minimal](/src/services/telemetry/sendStart.js) and helps me improve this action.
@@ -89,8 +89,8 @@ jobs:
           organization: 'Sportsbet-Internal'
           period: 7
           charts: true
-          disable-links: true
-          sort-by: 'COMMENTS'
+          sort-by: 'TIME'
+          limit-top: 10
 ```
 
 This config will:

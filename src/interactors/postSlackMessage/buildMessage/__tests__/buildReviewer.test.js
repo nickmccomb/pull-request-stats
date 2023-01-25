@@ -7,7 +7,6 @@ const defaultParams = {
   t,
   reviewer,
   index: 0,
-  disableLinks: true,
   displayCharts: false,
 };
 
@@ -84,7 +83,7 @@ describe('Interactors | postSlackMessage | .buildReviewer', () => {
 
   describe('requiring links', () => {
     it('adds a medal to username section', () => {
-      const response = buildReviewer({ ...defaultParams, disableLinks: false });
+      const response = buildReviewer({ ...defaultParams });
       expect(response).toEqual([
         USERNAME,
         {
@@ -94,7 +93,7 @@ describe('Interactors | postSlackMessage | .buildReviewer', () => {
             STATS.fields[1],
             {
               type: 'mrkdwn',
-              text: `*${t('table.columns.timeToReview')}:* <https://app.flowwer.dev/charts/review-time/1|34m>`,
+              text: `*${t('table.columns.timeToReview')}:* 34m`,
             },
           ],
         },

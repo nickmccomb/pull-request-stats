@@ -26,7 +26,6 @@ describe('Interactors | .postSlackMessage', () => {
     reviewers: 'REVIEWERS',
     pullRequest: 'PULl REQUEST',
     periodLength: 'PERIOD LENGTH',
-    disableLinks: 'DISPLAY LINKS',
     displayCharts: 'DISPLAY CHARTS',
     slack: {
       webhook: 'https://slack.com/webhook',
@@ -72,7 +71,6 @@ describe('Interactors | .postSlackMessage', () => {
         reviewers: defaultOptions.reviewers,
         pullRequest: defaultOptions.pullRequest,
         periodLength: defaultOptions.periodLength,
-        disableLinks: defaultOptions.disableLinks,
         displayCharts: defaultOptions.displayCharts,
       });
       expect(Fetchers.postToSlack).toBeCalledTimes(1);

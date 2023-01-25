@@ -15,7 +15,6 @@ const defaultOptions = {
   reviewers: ['REVIEWER 1'],
   pullRequest: 'PULL REQUEST',
   periodLength: 'PERIOD LENGTH',
-  disableLinks: 'DISABLE LINKS',
   displayCharts: 'DISPLAY CHARTS',
 };
 
@@ -48,7 +47,6 @@ describe('Interactors | postTeamsMessage | .buildMessage', () => {
     expect(buildReviewer).toHaveBeenCalledWith({
       index: 0,
       reviewer: defaultOptions.reviewers[0],
-      disableLinks: defaultOptions.disableLinks,
       displayCharts: defaultOptions.displayCharts,
     });
   });
