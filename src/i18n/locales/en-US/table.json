@@ -1,6 +1,6 @@
 {
   "title": "Pull reviewers stats",
-  "icon": "https://s3.amazonaws.com/manuelmhtr.assets/flowwer/logo/logo-1024px.png",
+  "icon": "https://avatars.githubusercontent.com/u/5714109?s=200&v=4",
   "subtitle": {
     "one": "Stats of the last day for {{sources}}",
     "other": "Stats of the last {{count}} days for {{sources}}"

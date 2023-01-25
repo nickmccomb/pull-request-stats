@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run pull request stats
-        uses: flowwer-dev/pull-request-stats@master
+        uses: Sportsbet-Internal/pull-request-stats@master
         with:
           repositories: 'piedpiper/repo1,piedpiper/repo2'
           webhook: 'https://hooks.zapier.com/hooks/catch/123456/XXXXXXXX'
@@ -93,7 +93,7 @@ The webhook payload will include:
   ],
   "options": {
     "periodLength": 30,
-    "organization": "flowwer-dev",
+    "organization": "Sportsbet",
     "repositories": null
   }
 }
