@@ -19,20 +19,17 @@ module.exports = ({
   const top = sorted.slice(0, limitTop);
   const bottom = sorted.slice(-limitBottom);
 
-  // only show top X and bottom X reviewers
+  // only show top X and bottom X reviewers (also removes duplicates if there are any)
   if (limitTop && limitBottom) {
-    return [...top, ...bottom];
+    return [...new Set([...top, ...bottom])];
   }
 
   // only show top X reviewers
-  if (limitTop) {
-    return top;
-  }
+  if (limitTop) return top;
 
-  // only show bottom X reviwers
-  if (limitBottom) {
-    return bottom;
-  }
+  // only show bottom X reviewers
+  if (limitBottom) return bottom;
 
+  // show all reviewers
   return sorted;
 };
