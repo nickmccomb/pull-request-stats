@@ -1,6 +1,8 @@
 # Pull Request Stats
 Github action to print relevant stats about Pull Request reviewers.
 
+This repository is an extended version of [Pull Request Stats](https://github.com/flowwer-dev/pull-request-stats)
+
 The objective of this action is to:
 
 * Reduce the time taken to review the pull requests.
